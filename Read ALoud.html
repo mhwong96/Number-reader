@@ -30,7 +30,7 @@
 <body onclick="startReading()">
     <h1>Number Reader</h1>
     <label for="numberInput">輸入數字：</label>
-    <input type="number" id="numberInput" value="3000" onchange="updateNumber()">
+    <input type="number" id="numberInput" value="3001" onchange="updateNumber()">
 
     <script>
         let interval;
@@ -38,7 +38,6 @@
 
         function populateVoices() {
             voices = speechSynthesis.getVoices();
-
             if (voices.length === 0) {
                 setTimeout(populateVoices, 100); // Retry if voices are not loaded yet
             }
@@ -48,17 +47,18 @@
             speechSynthesis.cancel(); // Prevent speech overlap
 
             let number = parseInt(document.getElementById('numberInput').value) || 0;
-            const utterance = new SpeechSynthesisUtterance(`現在的數字是 ${number}`);
+            let selectedVoice = voices.find(voice => voice.lang === "zh-HK") || voices.find(voice => voice.lang.startsWith("zh"));
 
-            // Select a Cantonese-compatible voice
-            let selectedVoice = voices.find(voice => voice.lang === "zh-HK") || 
-                                voices.find(voice => voice.lang.startsWith("zh"));
-
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
+            // Repeat announcement three times
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(`吾該${number}前`);
+                    if (selectedVoice) {
+                        utterance.voice = selectedVoice;
+                    }
+                    speechSynthesis.speak(utterance);
+                }, i * 1500); // Delay each repetition by 1.5 seconds
             }
-
-            speechSynthesis.speak(utterance);
         }
 
         function updateNumber() {
@@ -69,13 +69,13 @@
             if (!interval) {
                 interval = setInterval(() => {
                     speakNumber();
-                }, 3000); // 10 minutes
+                }, 3000); // Every 3 seconds
             }
         }
 
         speechSynthesis.onvoiceschanged = populateVoices;
         populateVoices();
-        startReading(); // Start reading automatically on mobile
+        startReading(); // Start reading automatically
 
     </script>
 </body>
