@@ -14,26 +14,45 @@
 
         input[type=number] {
             -moz-appearance: textfield; /* Firefox */
+            font-size: 20px;
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
         }
     </style>
 </head>
-<body>
+<body onclick="startReading()">
     <h1>Number Reader</h1>
     <label for="numberInput">輸入數字：</label>
     <input type="number" id="numberInput" value="0" onchange="updateNumber()">
-    
+
     <script>
         let interval;
         let voices = [];
 
         function populateVoices() {
             voices = speechSynthesis.getVoices();
+
+            if (voices.length === 0) {
+                setTimeout(populateVoices, 100); // Retry if voices are not loaded yet
+            }
         }
 
         function speakNumber() {
+            speechSynthesis.cancel(); // Prevent speech overlap
+
             let number = parseInt(document.getElementById('numberInput').value) || 0;
-            const utterance = new SpeechSynthesisUtterance(`吾吾該${number}前`);
-            let selectedVoice = voices.find(voice => voice.lang === "zh-HK");
+            const utterance = new SpeechSynthesisUtterance(`現在的數字是 ${number}`);
+
+            // Select a Cantonese-compatible voice
+            let selectedVoice = voices.find(voice => voice.lang === "zh-HK") || 
+                                voices.find(voice => voice.lang.startsWith("zh"));
 
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
@@ -47,14 +66,17 @@
         }
 
         function startReading() {
-            interval = setInterval(() => {
-                speakNumber();
-            }, 3000); // 600,000 milliseconds = 10 minutes
+            if (!interval) {
+                interval = setInterval(() => {
+                    speakNumber();
+                }, 600000); // 10 minutes
+            }
         }
 
         speechSynthesis.onvoiceschanged = populateVoices;
         populateVoices();
-        startReading(); // Start reading automatically when page loads
+        startReading(); // Start reading automatically on mobile
+
     </script>
 </body>
 </html>
