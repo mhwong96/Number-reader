@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Number Reader</title>
     <style>
-        /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
             display: flex;
@@ -22,7 +21,6 @@
             font-weight: bold;
         }
 
-        /* Input Box */
         input[type=number] {
             font-size: 20px;
             width: 80%;
@@ -39,7 +37,6 @@
             box-shadow: 0 0 8px rgba(0, 120, 215, 0.2);
         }
 
-        /* Remove arrows from number input */
         input[type=number]::-webkit-outer-spin-button,
         input[type=number]::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -50,9 +47,13 @@
             -moz-appearance: textfield; /* Firefox */
         }
 
-        /* Button Styling */
-        button {
+        .buttons {
             margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
             padding: 10px 20px;
             font-size: 18px;
             border: none;
@@ -71,10 +72,13 @@
 <body onclick="startReading()">
     <h1>Number Reader</h1>
     <label for="numberInput">輸入數字：</label>
-    <input type="number" id="numberInput" value="3000" onchange="updateNumber()">
+    <input type="number" id="numberInput" value="3001" onchange="updateNumber()">
 
-    <!-- New Button -->
-    <button onclick="increaseNumber()">+20</button>
+    <!-- Control Buttons -->
+    <div class="buttons">
+        <button onclick="increaseNumber()">+20</button>
+        <button onclick="decreaseNumber()">-20</button>
+    </div>
 
     <script>
         let interval;
@@ -87,32 +91,38 @@
             }
         }
 
+        function getCantoneseVoice() {
+            // Try to find Cantonese voice by lang or name
+            return voices.find(v => v.lang === "zh-HK" || v.name.includes("Sinji") || v.name.includes("Cantonese"))
+                || voices.find(v => v.lang.startsWith("zh"));
+        }
+
         function speakNumber() {
-            speechSynthesis.cancel(); // Prevent speech overlap
-
+            speechSynthesis.cancel(); // Prevent overlap
             let number = parseInt(document.getElementById('numberInput').value) || 0;
-            let selectedVoice = voices.find(voice => voice.lang === "zh-HK") || voices.find(voice => voice.lang.startsWith("zh"));
 
-            for (let i = 0; i < 2; i++) { // Repeats twice
-                setTimeout(() => {
-                    const utterance = new SpeechSynthesisUtterance(`吾該 ${number}前`);
-                    if (selectedVoice) {
-                        utterance.voice = selectedVoice;
-                    }
-                    speechSynthesis.speak(utterance);
-                }, i * 2000);
+            let selectedVoice = getCantoneseVoice();
+            const utterance = new SpeechSynthesisUtterance(`吾該 ${number}前`);
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
             }
+            speechSynthesis.speak(utterance);
         }
 
         function updateNumber() {
             speakNumber();
         }
 
-        // New function to increase number by 20
         function increaseNumber() {
             let input = document.getElementById('numberInput');
             input.value = parseInt(input.value) + 20;
-            updateNumber(); // Speak the new number immediately
+            updateNumber();
+        }
+
+        function decreaseNumber() {
+            let input = document.getElementById('numberInput');
+            input.value = parseInt(input.value) - 20;
+            updateNumber();
         }
 
         function startReading() {
@@ -123,10 +133,9 @@
             }
         }
 
+        // iOS/Safari requires voiceschanged event
         speechSynthesis.onvoiceschanged = populateVoices;
         populateVoices();
-        startReading();
     </script>
 </body>
 </html>
-
