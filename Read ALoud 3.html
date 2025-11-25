@@ -72,12 +72,11 @@
 <body onclick="startReading()">
     <h1>Number Reader</h1>
     <label for="numberInput">輸入數字：</label>
-    <input type="number" id="numberInput" value="3001" onchange="updateNumber()">
+    <input type="number" id="numberInput" value="3000" onchange="updateNumber()">
 
     <!-- Control Buttons -->
     <div class="buttons">
         <button onclick="increaseNumber()">+20</button>
-        <button onclick="decreaseNumber()">-20</button>
     </div>
 
     <script>
@@ -134,7 +133,7 @@ function speakNumber() {
             if (!interval) {
                 interval = setInterval(() => {
                     speakNumber();
-                }, 300000); // Every 5 minutes
+                }, 60); // Every 1 minutes
             }
         }
 
@@ -144,4 +143,5 @@ function speakNumber() {
     </script>
 </body>
 </html>
+
 
