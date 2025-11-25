@@ -97,17 +97,22 @@
                 || voices.find(v => v.lang.startsWith("zh"));
         }
 
-        function speakNumber() {
-            speechSynthesis.cancel(); // Prevent overlap
-            let number = parseInt(document.getElementById('numberInput').value) || 0;
+function speakNumber() {
+    speechSynthesis.cancel();
+    let number = parseInt(document.getElementById('numberInput').value) || 0;
+    let selectedVoice = getCantoneseVoice();
 
-            let selectedVoice = getCantoneseVoice();
+    for (let i = 0; i < 3; i++) { // repeat 3 times
+        setTimeout(() => {
             const utterance = new SpeechSynthesisUtterance(`吾該 ${number}前`);
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
             }
             speechSynthesis.speak(utterance);
-        }
+        }, i * 2000); // 2‑second pause between each
+    }
+}
+
 
         function updateNumber() {
             speakNumber();
@@ -139,3 +144,4 @@
     </script>
 </body>
 </html>
+
