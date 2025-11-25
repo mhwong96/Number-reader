@@ -49,13 +49,31 @@
         input[type=number] {
             -moz-appearance: textfield; /* Firefox */
         }
+
+        /* Button Styling */
+        button {
+            margin-top: 12px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background-color: #0078D7;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #005a9e;
+        }
     </style>
 </head>
 <body onclick="startReading()">
     <h1>Number Reader</h1>
     <label for="numberInput">輸入數字：</label>
     <input type="number" id="numberInput" value="3001" onchange="updateNumber()">
-<!-- New Button -->
+
+    <!-- New Button -->
     <button onclick="increaseNumber()">+20</button>
 
     <script>
@@ -75,19 +93,26 @@
             let number = parseInt(document.getElementById('numberInput').value) || 0;
             let selectedVoice = voices.find(voice => voice.lang === "zh-HK") || voices.find(voice => voice.lang.startsWith("zh"));
 
-            for (let i = 0; i < 2; i++) { // Repeats 3 times with a clear pause
+            for (let i = 0; i < 2; i++) { // Repeats twice
                 setTimeout(() => {
                     const utterance = new SpeechSynthesisUtterance(`吾該 ${number}前`);
                     if (selectedVoice) {
                         utterance.voice = selectedVoice;
                     }
                     speechSynthesis.speak(utterance);
-                }, i * 2000); // Adds a 2-second delay between each repetition
+                }, i * 2000);
             }
         }
 
         function updateNumber() {
             speakNumber();
+        }
+
+        // New function to increase number by 20
+        function increaseNumber() {
+            let input = document.getElementById('numberInput');
+            input.value = parseInt(input.value) + 20;
+            updateNumber(); // Speak the new number immediately
         }
 
         function startReading() {
@@ -101,8 +126,6 @@
         speechSynthesis.onvoiceschanged = populateVoices;
         populateVoices();
         startReading();
-
     </script>
 </body>
 </html>
-
