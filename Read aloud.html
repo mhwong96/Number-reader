@@ -20,7 +20,6 @@
         h1 {
             font-size: 28px;
             font-weight: bold;
-            margin-bottom: 20px;
         }
 
         /* Input Box */
@@ -58,19 +57,15 @@
             margin-top: 16px;
             border: none;
             border-radius: 8px;
-            background-color: #0078D7; /* same blue as input focus */
-            color: #fff;
+            background-color: #0078D7; /* Accent color */
+            color: white;
             cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
+            transition: 0.3s;
         }
 
         button:hover {
-            background-color: #005a9e; /* darker blue on hover */
+            background-color: #005a9e; /* Darker shade on hover */
             box-shadow: 0 0 8px rgba(0, 120, 215, 0.3);
-        }
-
-        button:active {
-            background-color: #004578; /* pressed state */
         }
     </style>
 </head>
@@ -78,7 +73,7 @@
     <h1>Number Reader</h1>
     <label for="numberInput">輸入數字：</label>
     <input type="number" id="numberInput" value="3001" onchange="updateNumber()">
-    <button onclick="addTwenty()">+20</button>
+    <button id="addButton" onclick="addTwenty()">+20</button>
 
     <script>
         let interval;
@@ -97,7 +92,7 @@
             let number = parseInt(document.getElementById('numberInput').value) || 0;
             let selectedVoice = voices.find(voice => voice.lang === "zh-HK") || voices.find(voice => voice.lang.startsWith("zh"));
 
-            for (let i = 0; i < 2; i++) { // Repeats 2 times with a clear pause
+            for (let i = 0; i < 3; i++) { // Repeats 3 times with a clear pause
                 setTimeout(() => {
                     const utterance = new SpeechSynthesisUtterance(`吾該 ${number}前`);
                     if (selectedVoice) {
@@ -116,7 +111,7 @@
             if (!interval) {
                 interval = setInterval(() => {
                     speakNumber();
-                }, 300000); // Every 5 minutes
+                }, 600000); // Every 10 minutes
             }
         }
 
@@ -124,7 +119,7 @@
             let input = document.getElementById('numberInput');
             let currentValue = parseInt(input.value) || 0;
             input.value = currentValue + 20;
-            updateNumber(); // speak the new number immediately
+            updateNumber(); // Speak updated number
         }
 
         speechSynthesis.onvoiceschanged = populateVoices;
